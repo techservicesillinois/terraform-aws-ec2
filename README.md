@@ -6,7 +6,7 @@ Provides an Elastic Computing Cloud (EC2) virtual server instance,
 and optional Route 53 aliases.
 This module only supports single-instance servers on public subnets.
 
-Example Usage
+Example usage (simple case)
 -----------------
 
 ```hcl
@@ -16,6 +16,46 @@ module "instance" {
   name = "example"
   tier = "public"
   vpc  = "vpc_name"
+}
+```
+
+Example usage (with EBS volume)
+-----------------
+
+```hcl
+module "instance" {
+  source = "git@github.com:techservicesillinois/terraform-aws-ec2"
+
+  name = "example"
+  tier = "public"
+  vpc  = "vpc_name"
+
+    # Mount block storage device at /scratch.
+    ebs_volume {
+    device_name = "/dev/xvdf"
+    mount_point = "/scratch"
+    volume_id   = "vol-cab005eb1ab"
+  }
+}
+```
+
+Example usage (with EFS file system)
+-----------------
+
+```hcl
+module "instance" {
+  source = "git@github.com:techservicesillinois/terraform-aws-ec2"
+
+  name = "example"
+  tier = "public"
+  vpc  = "vpc_name"
+ 
+  # Mount EFS file system at /mnt.
+  efs_file_system {
+    file_system_id = "fs-deadb33f"
+    mount_point    = "/mnt"
+    source_path    = "/"
+  }
 }
 ```
 
@@ -47,8 +87,9 @@ public IP address is to be assigned. Default: true
 * `cidr_blocks` - (Optional) List of CIDR blocks to have inbound SSH access
 to the EC2 instance.
 
-* `efs_file_system` - (Optional) Name of EFS volume to be rendered in
-template. Default: empty string.
+* `ebs_volume` – (Optional) An [ebs\_volume](#ebs_volume) block used to define the EBS volume to be attached to the EC2 instance(s).
+
+* `efs_file_system` – (Optional) An [efs\_file\_system](#efs_file_system) block used to define the EFS file system to be attached to the EC2 instance(s).
 
 * `instance_type` - (Optional) EC2 instance type. Default: t2.nano.
 
@@ -68,7 +109,7 @@ nat) to determine subnets to be associated with the load balancer.
 `alias`
 -------
 
-An `alias` block supports the following:
+An `alias` block supports the following keys:
 
 * `domain` - (Required) The name of the Route 53 zone in which the record
 is to be created.
@@ -83,6 +124,41 @@ Note that if the `hostname` is omitted, it will default to the `name`
 specified for the EC2 instance. This default will not work unless each
 `domain` specified is different, since multiple records with the same
 name can not be added in the same Route53 zone.
+
+`ebs_volume`
+-------
+
+An `ebs_volume` block supports the following keys:
+
+* `device_name` - (Required) The device file name to which the EBS volume will be attached on the virtual host. The value is passed to the `user_data` template as `ebs_device_name`.
+
+* `mount_point` – (Required) The path at which the EBS volume is to be mounted on the virtual host. The value is passed to the `user_data` template as `ebs_mount_point`.
+
+* `volume_id` - (Required) The EBS volume ID. The value is *not* passed to the `user_data` template, because the volume attachment takes place before the `user_data` file is run, thereby rendering it useless after the virtual server is booted.
+
+`efs_file_system`
+-------
+
+An `efs_file_system` block supports the following keys:
+
+* `file_system_id` - (Required) The EFS file system ID. The derived file system name is passed to the `user_data` template as `efs_file_system_name`.
+
+* `mount_point` – (Required) The path at which the EFS file system is to be mounted on the virtual host.  The value is passed to the `user_data` template as `efs_mount_point`.
+
+* `source_path` - (Required) The path relative to the EFS file system root to be mounted on the virtual host. The value is passed to the `user_data` template as `efs_source_path`.
+
+Template variables
+-------
+The following variables are passed to the `user_data` template, and are therefore
+available to the process by which the virtual host is provisioned.
+
+* `ebs_device_name`
+* `ebs_mount_point`
+* `efs_file_system_name`
+* `efs_mount_point`
+* `efs_source_path`
+
+For details about the data populated into these variables, please see the descriptions above for the [ebs\_volume](#ebs_volume) and [efs\_file\_system](#efs_file_system) blocks.
 
 Attributes Reference
 --------------------

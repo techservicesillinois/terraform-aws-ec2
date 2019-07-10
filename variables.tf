@@ -14,6 +14,11 @@ variable "alias" {
   default     = []
 }
 
+variable "availability_zone" {
+  description = "Availability zone for instance"
+  default     = ""
+}
+
 variable "ami_name_filter" {
   description = "List of image names to filter for candidate AMIs"
   default     = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
@@ -42,9 +47,14 @@ variable "cidr_blocks" {
   default     = []
 }
 
+variable "ebs_volume" {
+  description = "Map identifying EBS mount (Required keys: device_name, mount_point,and volume_id)"
+  default     = {}
+}
+
 variable "efs_file_system" {
-  description = "EFS filesystem id that can be rendered in template_file"
-  default     = ""
+  description = "Map identifying EFS mount (Required keys: file_system_id, mount_point and source_path)"
+  default     = {}
 }
 
 variable "instance_type" {
