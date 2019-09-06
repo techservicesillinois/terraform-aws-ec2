@@ -47,15 +47,13 @@ data "aws_ami" "selected" {
 }
 
 data "aws_efs_file_system" "selected" {
+  count          = "${length(var.efs_file_system) > 0 ? 1 : 0}"
   file_system_id = "${local.efs_file_system_id}"
 }
 
 provider "template" {}
 
 locals {
-  ebs_device_name    = "${lookup(var.ebs_volume, "device_name")}"
-  ebs_mount_point    = "${lookup(var.ebs_volume, "mount_point")}"
-  ebs_volume_id      = "${lookup(var.ebs_volume, "volume_id")}"
   efs_file_system_id = "${lookup(var.efs_file_system, "file_system_id")}"
   efs_mount_point    = "${lookup(var.efs_file_system, "mount_point")}"
   efs_source_path    = "${lookup(var.efs_file_system, "source_path")}"
@@ -65,8 +63,11 @@ data "template_file" "selected" {
   template = "${file("${var.template_file}")}"
 
   vars = {
-    ebs_device_name      = "${local.ebs_device_name}"
-    ebs_mount_point      = "${local.ebs_mount_point}"
+    # EBS variables.
+    ebs_device_name = "${local.ebs_device_name}"
+    ebs_mount_point = "${local.ebs_mount_point}"
+
+    # EFS variables.
     efs_file_system_name = "${local.fqdn_efs}"
     efs_mount_point      = "${local.efs_mount_point}"
     efs_source_path      = "${local.efs_source_path}"
