@@ -1,5 +1,5 @@
 locals {
-  fqdn_efs  = "${element(concat(data.aws_efs_file_system.default.*.dns_name, list("")), 0)}"
+  fqdn_efs  = "${element(concat(data.aws_efs_file_system.selected.*.dns_name, list("")), 0)}"
   subnet_id = "${element(data.aws_subnet_ids.selected.ids, 0)}"
   vpc_id    = "${data.aws_vpc.selected.id}"
 
@@ -30,7 +30,7 @@ data "aws_security_groups" "selected" {
   }
 }
 
-data "aws_ami" "default" {
+data "aws_ami" "selected" {
   most_recent = true
 
   filter {
@@ -46,17 +46,30 @@ data "aws_ami" "default" {
   owners = ["${var.ami_image_owner}"]
 }
 
-data "aws_efs_file_system" "default" {
-  count          = "${var.efs_file_system != "" ? 1 : 0}"
-  file_system_id = "${var.efs_file_system}"
+data "aws_efs_file_system" "selected" {
+  count          = "${length(var.efs_file_system) > 0 ? 1 : 0}"
+  file_system_id = "${local.efs_file_system_id}"
 }
 
 provider "template" {}
 
-data "template_file" "default" {
+locals {
+  efs_file_system_id = "${lookup(var.efs_file_system, "file_system_id")}"
+  efs_mount_point    = "${lookup(var.efs_file_system, "mount_point")}"
+  efs_source_path    = "${lookup(var.efs_file_system, "source_path")}"
+}
+
+data "template_file" "selected" {
   template = "${file("${var.template_file}")}"
 
   vars = {
-    efs_filesystem_name = "${local.fqdn_efs}"
+    # EBS variables.
+    ebs_device_name = "${local.ebs_device_name}"
+    ebs_mount_point = "${local.ebs_mount_point}"
+
+    # EFS variables.
+    efs_file_system_name = "${local.fqdn_efs}"
+    efs_mount_point      = "${local.efs_mount_point}"
+    efs_source_path      = "${local.efs_source_path}"
   }
 }

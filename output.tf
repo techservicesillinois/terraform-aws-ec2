@@ -1,9 +1,5 @@
-output "fqdn_alias" {
+output "alias" {
   value = "${aws_route53_record.default.*.fqdn}"
-}
-
-output "fqdn_efs" {
-  value = "${local.fqdn_efs}"
 }
 
 output "private_dns" {
