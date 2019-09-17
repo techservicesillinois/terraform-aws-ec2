@@ -1,7 +1,8 @@
 locals {
-  fqdn_efs  = "${element(concat(data.aws_efs_file_system.selected.*.dns_name, list("")), 0)}"
-  subnet_id = "${element(data.aws_subnet_ids.selected.ids, 0)}"
-  vpc_id    = "${data.aws_vpc.selected.id}"
+  availability_zone = "${var.availability_zone == "" ? element(data.aws_availability_zones.selected.names, 0) : var.availability_zone}"
+  fqdn_efs          = "${element(concat(data.aws_efs_file_system.selected.*.dns_name, list("")), 0)}"
+  subnet_id         = "${element(data.aws_subnet_ids.selected.ids, 0)}"
+  vpc_id            = "${data.aws_vpc.selected.id}"
 
   # Allow SSH port (22) by default.
   ports = "${sort(distinct(concat(list("22"), var.ports)))}"
@@ -13,8 +14,17 @@ data "aws_vpc" "selected" {
   }
 }
 
+data "aws_availability_zones" "selected" {
+  # state = "available"
+}
+
 data "aws_subnet_ids" "selected" {
   vpc_id = "${data.aws_vpc.selected.id}"
+
+  filter {
+    name   = "availability-zone"
+    values = ["${local.availability_zone}"]
+  }
 
   tags {
     Tier = "${var.tier}"
@@ -54,9 +64,9 @@ data "aws_efs_file_system" "selected" {
 provider "template" {}
 
 locals {
-  efs_file_system_id = "${lookup(var.efs_file_system, "file_system_id")}"
-  efs_mount_point    = "${lookup(var.efs_file_system, "mount_point")}"
-  efs_source_path    = "${lookup(var.efs_file_system, "source_path")}"
+  efs_file_system_id = "${lookup(var.efs_file_system, "file_system_id", "")}"
+  efs_mount_point    = "${lookup(var.efs_file_system, "mount_point", "")}"
+  efs_source_path    = "${lookup(var.efs_file_system, "source_path", "")}"
 }
 
 data "template_file" "selected" {
