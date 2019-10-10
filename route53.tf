@@ -4,6 +4,10 @@ data "aws_route53_zone" "selected" {
   name = "${lookup(var.alias[count.index], "domain", "")}"
 }
 
+locals {
+  public_ip = "${var.eip_create ? element(concat(aws_eip.default.*.public_ip, list("")), 0) : aws_instance.default.public_ip}"
+}
+
 resource "aws_route53_record" "default" {
   count = "${length(var.alias)}"
 
@@ -11,5 +15,5 @@ resource "aws_route53_record" "default" {
   name    = "${lookup(var.alias[count.index], "hostname", var.name)}"
   type    = "A"
   ttl     = "${lookup(var.alias[count.index], "ttl", 60)}"
-  records = ["${aws_instance.default.public_ip}"]
+  records = ["${local.public_ip}"]
 }

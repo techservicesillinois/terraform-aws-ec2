@@ -19,6 +19,34 @@ module "instance" {
 }
 ```
 
+Example usage (alias block with optional creation of elastic IP)
+-----------------
+
+```hcl
+module "instance" {
+  source = "git@github.com:techservicesillinois/terraform-aws-ec2"
+
+  alias = [
+    {
+    hostname = "example"
+    domain   = "mydomain.example.com"
+    }
+  ]
+
+  eip_create = true
+  name       = "example"
+  tier       = "public"
+  vpc        = "vpc_name"
+}
+```
+
+Note that if you stop and start the EC2 instance, the IP address will
+change, but the alias record will not change. This behavior causes
+the Route53 record to be out of date.
+
+Avoid this by using `eip_create`, which creates an elastic IP address
+that persists until destroyed.
+
 Example usage (with EBS volume)
 -----------------
 
@@ -90,6 +118,8 @@ to the EC2 instance.
 * `ebs_volume` – (Optional) An [ebs\_volume](#ebs_volume) block used to define the EBS volume to be attached to the EC2 instance(s).
 
 * `efs_file_system` – (Optional) An [efs\_file\_system](#efs_file_system) block used to define the EFS file system to be attached to the EC2 instance(s).
+
+* `eip_create` – (Optional) A Boolean value specifying that an elastic IP address should be created and attached to the EC2 instance(s). Default is false.
 
 * `instance_type` - (Optional) EC2 instance type. Default: t2.nano.
 

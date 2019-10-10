@@ -15,5 +15,5 @@ output "public_dns" {
 }
 
 output "public_ip" {
-  value = "${aws_instance.default.public_ip}"
+  value = "${local.public_ip}"
 }
