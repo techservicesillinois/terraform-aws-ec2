@@ -57,6 +57,11 @@ variable "efs_file_system" {
   default     = {}
 }
 
+variable "eip_create" {
+  description = "Create elastic IP address for instance"
+  default     = false
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   default     = "t2.nano"
