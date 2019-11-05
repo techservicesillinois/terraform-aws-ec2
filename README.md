@@ -59,7 +59,7 @@ module "instance" {
   vpc  = "vpc_name"
 
     # Mount block storage device at /scratch.
-    ebs_volume {
+    ebs_volume = {
     device_name = "/dev/xvdf"
     mount_point = "/scratch"
     volume_id   = "vol-cab005eb1ab"
@@ -79,7 +79,7 @@ module "instance" {
   vpc  = "vpc_name"
  
   # Mount EFS file system at /mnt.
-  efs_file_system {
+  efs_file_system = {
     file_system_id = "fs-deadb33f"
     mount_point    = "/mnt"
     source_path    = "/"

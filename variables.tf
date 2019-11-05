@@ -11,6 +11,7 @@ variable "vpc" {
 
 variable "alias" {
   description = "Route 53 alias block"
+  type        = list(map(string))
   default     = []
 }
 
@@ -21,11 +22,13 @@ variable "availability_zone" {
 
 variable "ami_name_filter" {
   description = "List of image names to filter for candidate AMIs"
+  type        = list(string)
   default     = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
 }
 
 variable "ami_virtualization_type_filter" {
   description = "List of virtualization types to filter for candidate AMIs"
+  type        = list(string)
   default     = ["hvm"]
 }
 
@@ -34,26 +37,30 @@ variable "ami_virtualization_type_filter" {
 
 variable "ami_image_owner" {
   description = "List of Owner IDs to filter for candidate AMIs"
+  type        = list(string)
   default     = ["099720109477"]
 }
 
 variable "associate_public_ip_address" {
   description = "Boolean specifying whether public IP address is to be assigned"
-  default     = "true"
+  default     = true
 }
 
 variable "cidr_blocks" {
   description = "List CIDR blocks to have inbound SSH access to the EC2 instance"
+  type        = list(string)
   default     = []
 }
 
 variable "ebs_volume" {
   description = "Map identifying EBS mount (Required keys: device_name, mount_point,and volume_id)"
+  type        = map(string)
   default     = {}
 }
 
 variable "efs_file_system" {
   description = "Map identifying EFS mount (Required keys: file_system_id, mount_point and source_path)"
+  type        = map(string)
   default     = {}
 }
 
@@ -74,11 +81,13 @@ variable "key_name" {
 
 variable "ports" {
   description = "Ports to be opened on the EC2 instance"
+  type        = list(number)
   default     = []
 }
 
 variable "tags" {
   description = "Mapping of tags to assign to resources"
+  type        = map(string)
   default     = {}
 }
 
@@ -89,6 +98,7 @@ variable "tier" {
 
 variable "security_groups" {
   description = "List of security group names (ID does not work!)"
+  type        = list(string)
   default     = []
 }
 
