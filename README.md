@@ -19,7 +19,7 @@ module "instance" {
 }
 ```
 
-Example usage (alias block with optional creation of elastic IP)
+Example usage (alias block with optional creation of Elastic IP)
 -----------------
 
 ```hcl
@@ -33,7 +33,11 @@ module "instance" {
     }
   ]
 
-  eip_create = true
+  eip = {
+    name     = "my_existing_eip"
+    create   = false
+  }
+
   name       = "example"
   tier       = "public"
   vpc        = "vpc_name"
@@ -44,8 +48,11 @@ Note that if you stop and start the EC2 instance, the IP address will
 change, but the alias record will not change. This behavior causes
 the Route53 record to be out of date.
 
-Avoid this by using `eip_create`, which creates an elastic IP address
-that persists until destroyed.
+Avoid this by specifying an `eip` block, which attaches an Elastic IP address
+that persists until destroyed. This Elastic IP address can be created on the
+fly at the time the EC2 instance is created. Alternatively, to have an 
+Elastic IP address which persists unchanged even after the EC2 instance is 
+torn down and rebuilt, create it in advance and look it up by name.
 
 Example usage (with EBS volume)
 -----------------
@@ -119,7 +126,7 @@ to the EC2 instance.
 
 * `efs_file_system` – (Optional) An [efs\_file\_system](#efs_file_system) block used to define the EFS file system to be attached to the EC2 instance(s).
 
-* `eip_create` – (Optional) A Boolean value specifying that an elastic IP address should be created and attached to the EC2 instance(s). Default is false.
+* `eip` – (Optional) An [eip](#eip) block used to create or look up an Elastic IP to attach to the EC2 instance. To omit the Elastic IP entirely, do not specify an `eip` block.
 
 * `instance_type` - (Optional) EC2 instance type. Default: t2.nano.
 
@@ -176,6 +183,19 @@ An `efs_file_system` block supports the following keys:
 * `mount_point` – (Required) The path at which the EFS file system is to be mounted on the virtual host.  The value is passed to the `user_data` template as `efs_mount_point`.
 
 * `source_path` - (Required) The path relative to the EFS file system root to be mounted on the virtual host. The value is passed to the `user_data` template as `efs_source_path`.
+
+`eip`
+-------
+
+An `eip` block supports the following keys:
+
+* `name` - (Optional) The name of the Elastic IP address to attach to this EC2 instance. This may be the name of an existing Elastic IP already created in a prior step, 
+or a name to give to a new Elastic IP address to be created at the time the 
+EC2 instance is created. Default is the name of the EC2 instance (given in 
+the `name` argument above).
+
+* `create` - (Required) Set to true if the Elastic IP is to be created for the
+EC2 instance. Set to false if the Elastic IP already exists and is to be looked up.
 
 Template variables
 -------

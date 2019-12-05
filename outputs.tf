@@ -11,7 +11,7 @@ output "private_ip" {
 }
 
 output "public_dns" {
-  value = aws_instance.default.public_dns
+  value = local.public_dns
 }
 
 output "public_ip" {
