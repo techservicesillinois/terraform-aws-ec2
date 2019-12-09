@@ -64,9 +64,10 @@ variable "efs_file_system" {
   default     = {}
 }
 
-variable "eip_create" {
+variable "eip" {
   description = "Create elastic IP address for instance"
-  default     = false
+  type        = map(any)
+  default     = {}
 }
 
 variable "instance_type" {
