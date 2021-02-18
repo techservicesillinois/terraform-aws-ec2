@@ -1,4 +1,4 @@
-[![Build Status](https://drone.techservices.illinois.edu/api/badges/techservicesillinois/terraform-aws-ec2/status.svg)](https://drone.techservices.illinois.edu/techservicesillinois/terraform-aws-ec2)
+[![Terraform actions status](https://github.com/techservicesillinois/terraform-aws-ec2/workflows/terraform/badge.svg)](https://github.com/techservicesillinois/terraform-aws-ec2/actions)
 
 # ec2
 
@@ -155,6 +155,9 @@ is to be created.
 specified Route 53 zone. Default: the EC2 instance name (i.e., what
 appears in the `name` attribute).
 
+* `private_zone` – (Optional) Specify if the alias is to reside in a 
+private zone inside the virtual private cloud (VPC). Default: false.
+
 * `ttl` - (Optional) Time in seconds for DNS lookup to be cached. Default: 60.
 
 Note that if the `hostname` is omitted, it will default to the `name`
@@ -199,16 +202,21 @@ EC2 instance. Set to false if the Elastic IP already exists and is to be looked 
 
 Template variables
 -------
-The following variables are passed to the `user_data` template, and are therefore
-available to the process by which the virtual host is provisioned.
+The following variables are passed to the `user_data` template, and are
+therefore available to the process by which the virtual host is provisioned.
 
 * `ebs_device_name`
 * `ebs_mount_point`
 * `efs_file_system_name`
 * `efs_mount_point`
 * `efs_source_path`
+* `hostname`
 
-For details about the data populated into these variables, please see the descriptions above for the [ebs\_volume](#ebs_volume) and [efs\_file\_system](#efs_file_system) blocks.
+For details about the data populated into the `ebs_` and `efs_` variables,
+please see the descriptions above for the [ebs\_volume](#ebs_volume) and [efs\_file\_system](#efs_file_system) blocks.
+
+The `hostname` contains a fully-qualified domain name computed from the
+first entry in the `alias` block, if any is defined.
 
 Attributes Reference
 --------------------
