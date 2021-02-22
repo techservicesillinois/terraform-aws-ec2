@@ -67,18 +67,20 @@ locals {
   efs_file_system_id = lookup(var.efs_file_system, "file_system_id", "")
   efs_mount_point    = lookup(var.efs_file_system, "mount_point", "")
   efs_source_path    = lookup(var.efs_file_system, "source_path", "")
+  hostname           = length(var.alias) > 0 ? format("%s.%s", lookup(var.alias[0], "hostname", var.name), var.alias[0].domain) : null
 }
 
 data "template_file" "selected" {
   template = file(var.template_file)
 
+  # Pass hostname (fully-qualified domain name), and EBS and EFS variables
+  # to template.
   vars = {
-    # EBS variables.
-    ebs_device_name = local.ebs_device_name
-    ebs_mount_point = local.ebs_mount_point
-    # EFS variables.
+    ebs_device_name      = local.ebs_device_name
+    ebs_mount_point      = local.ebs_mount_point
     efs_file_system_name = local.fqdn_efs
     efs_mount_point      = local.efs_mount_point
     efs_source_path      = local.efs_source_path
+    hostname             = local.hostname
   }
 }

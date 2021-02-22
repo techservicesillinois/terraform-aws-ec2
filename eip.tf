@@ -10,6 +10,10 @@ locals {
   # get name of EIP from the eip map, or default to name of the EC2 instance
   eip_name = lookup(var.eip, "name", null) != null ? lookup(var.eip, "name") : var.name
 
+  private_ip = local.want_eip ? element(concat(aws_eip.default.*.private_ip, data.aws_eip.selected.*.private_ip, [""]), 0) : aws_instance.default.private_ip
+
+  private_dns = local.want_eip ? element(concat(aws_eip.default.*.private_dns, data.aws_eip.selected.*.private_dns, [""]), 0) : aws_instance.default.private_dns
+
   public_ip = local.want_eip ? element(concat(aws_eip.default.*.public_ip, data.aws_eip.selected.*.public_ip, [""]), 0) : aws_instance.default.public_ip
 
   public_dns = local.want_eip ? element(concat(aws_eip.default.*.public_dns, data.aws_eip.selected.*.public_dns, [""]), 0) : aws_instance.default.public_dns
