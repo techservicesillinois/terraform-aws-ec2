@@ -17,7 +17,7 @@ variable "alias" {
 
 variable "availability_zone" {
   description = "Availability zone for instance"
-  default     = ""
+  default     = null
 }
 
 variable "ami_name_filter" {
@@ -86,15 +86,20 @@ variable "ports" {
   default     = []
 }
 
-variable "tags" {
-  description = "Mapping of tags to assign to resources"
-  type        = map(string)
-  default     = {}
+variable "subnet_type" {
+  description = "Subnet type (e.g., 'campus', 'private', 'public') for resource placement"
+  default     = "public"
 }
 
 variable "tier" {
   description = "Subnet tier tag (e.g., public, private, nat) to determine subnets"
   default     = "public"
+}
+
+variable "tags" {
+  description = "Mapping of tags to assign to resources"
+  type        = map(string)
+  default     = {}
 }
 
 variable "security_groups" {

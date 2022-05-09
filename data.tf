@@ -1,34 +1,43 @@
+terraform {
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.1"
+    }
+
+    template = {
+      source = "hashicorp/template"
+    }
+  }
+}
+
 locals {
-  availability_zone = var.availability_zone == "" ? element(data.aws_availability_zones.selected.names, 0) : var.availability_zone
+  availability_zone = var.availability_zone == null ? random_shuffle.az[0].result[0] : var.availability_zone
   fqdn_efs          = element(concat(data.aws_efs_file_system.selected.*.dns_name, [""]), 0)
-  subnet_id         = element(tolist(data.aws_subnet_ids.selected.ids), 0)
-  vpc_id            = data.aws_vpc.selected.id
+  subnet_id         = module.get-subnets.subnets_by_az[local.availability_zone][0]
+  vpc_id            = module.get-subnets.vpc.id
 
   # Allow SSH port (22) by default.
   ports = sort(distinct(concat([22], var.ports)))
 }
 
-data "aws_vpc" "selected" {
-  tags = {
-    Name = var.vpc
-  }
+module "get-subnets" {
+  source = "github.com/techservicesillinois/terraform-aws-util//modules/get-subnets?ref=v3.0.4"
+
+  ##### FIXME: is this needed?
+  include_subnets_by_az = true
+  subnet_type           = var.subnet_type
+  vpc                   = var.vpc
 }
 
-data "aws_availability_zones" "selected" {
-  # state = "available"
-}
+# Choose a single random availability zone from map of AZs matching
+# the specified subnet_type.
 
-data "aws_subnet_ids" "selected" {
-  vpc_id = data.aws_vpc.selected.id
+resource "random_shuffle" "az" {
+  count = var.availability_zone == null ? 1 : 0
 
-  filter {
-    name   = "availability-zone"
-    values = [local.availability_zone]
-  }
-
-  tags = {
-    Tier = var.tier
-  }
+  input        = keys(module.get-subnets.subnets_by_az)
+  result_count = 1
 }
 
 data "aws_security_groups" "selected" {
@@ -60,8 +69,6 @@ data "aws_efs_file_system" "selected" {
   count          = length(var.efs_file_system) > 0 ? 1 : 0
   file_system_id = local.efs_file_system_id
 }
-
-provider "template" {}
 
 locals {
   efs_file_system_id = lookup(var.efs_file_system, "file_system_id", "")

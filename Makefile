@@ -24,7 +24,7 @@ test: .terraform
 	# DO put a badge in top-level README.md
 	grep -q "\[\!\[Terraform actions status\]([^)]*$(REPO)/workflows/terraform/badge.svg)\]([^)]*$(REPO)/actions)" README.md
 	# Do NOT use ?ref= in source lines in a README.md!
-	! grep 'source\s*=.*?ref=' *.tf README.md
+	! grep 'source\s*=.*?ref=' README.md
 	# Do NOT start a source line with git::
 	! grep 'source\s*=\s*"git::' *.tf README.md
 	# Do NOT use .git in a source line
