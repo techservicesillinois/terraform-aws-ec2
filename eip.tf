@@ -21,7 +21,7 @@ locals {
 
 # lookup the existing EIP if that's what we're doing
 data "aws_eip" "selected" {
-  count = local.want_eip && (! local.eip_create) ? 1 : 0
+  count = local.want_eip && (!local.eip_create) ? 1 : 0
 
   filter {
     name   = "tag:Name"

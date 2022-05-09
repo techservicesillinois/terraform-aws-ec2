@@ -2,7 +2,7 @@ data "aws_route53_zone" "selected" {
   count = length(var.alias)
 
   name         = var.alias[count.index].domain
-  vpc_id       = lookup(var.alias[count.index], "private_zone", false) ? data.aws_vpc.selected.id : null
+  vpc_id       = lookup(var.alias[count.index], "private_zone", false) ? local.vpc_id : null
   private_zone = lookup(var.alias[count.index], "private_zone", false)
 }
 

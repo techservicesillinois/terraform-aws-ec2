@@ -2,6 +2,10 @@ output "alias" {
   value = aws_route53_record.default.*.fqdn
 }
 
+output "availability_zone" {
+  value = local.availability_zone
+}
+
 output "private_dns" {
   value = aws_instance.default.private_dns
 }
