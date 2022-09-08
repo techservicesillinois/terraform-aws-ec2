@@ -143,6 +143,8 @@ to the EC2 instance.
 * `tier` - (Optional) A subnet tier tag (e.g., public, private,
 nat) to determine subnets to be associated with the load balancer.
 
+* `private_ip` - (Optional) Private IP address to associate with the instance in a VPC.
+
 `alias`
 -------
 
