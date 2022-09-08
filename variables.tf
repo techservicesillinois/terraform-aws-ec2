@@ -112,3 +112,8 @@ variable "template_file" {
   description = "User data template file"
   default     = "/dev/null"
 }
+
+variable "private_ip" {
+  description = "Private IP address to associate with the instance in a VPC"
+  default     = null
+}

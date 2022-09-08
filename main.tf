@@ -9,6 +9,7 @@ resource "aws_instance" "default" {
     flatten(data.aws_security_groups.selected.*.ids),
   )
 
+  private_ip                  = var.private_ip
   subnet_id                   = local.subnet_id
   associate_public_ip_address = var.associate_public_ip_address
   user_data                   = data.template_file.selected.rendered
