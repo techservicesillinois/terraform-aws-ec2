@@ -1,8 +1,9 @@
 resource "aws_instance" "default" {
-  ami               = data.aws_ami.selected.id
-  instance_type     = var.instance_type
-  availability_zone = local.availability_zone
-  key_name          = var.key_name
+  ami                  = data.aws_ami.selected.id
+  iam_instance_profile = var.iam_instance_profile
+  instance_type        = var.instance_type
+  availability_zone    = local.availability_zone
+  key_name             = var.key_name
 
   vpc_security_group_ids = concat(
     [aws_security_group.default.id],
