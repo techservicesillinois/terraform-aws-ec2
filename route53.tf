@@ -13,5 +13,5 @@ resource "aws_route53_record" "default" {
   name    = lookup(var.alias[count.index], "hostname", var.name)
   type    = "A"
   ttl     = lookup(var.alias[count.index], "ttl", 60)
-  records = [lookup(var.alias[count.index], "private_zone", false) ? local.private_ip : local.public_ip]
+  records = [(lookup(var.alias[count.index], "private_zone", false) || lookup(var.alias[count.index], "use_private_ip", false)) ? local.private_ip : local.public_ip]
 }

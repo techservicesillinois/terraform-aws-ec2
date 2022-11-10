@@ -159,6 +159,8 @@ private zone inside the virtual private cloud (VPC). Default: false.
 
 * `ttl` - (Optional) Time in seconds for DNS lookup to be cached. Default: 60.
 
+* `use_private_ip` (Optional) Route53 record should use private rather than public IP address. Default: false.
+
 Note that if the `hostname` is omitted, it will default to the `name`
 specified for the EC2 instance. This default will not work unless each
 `domain` specified is different, since multiple records with the same
@@ -222,14 +224,14 @@ Attributes Reference
 
 The following attributes are exported:
 
-* `fqdn_alias` – A list of fully qualified domain names (if any) for each alias created for the EC2 volume
+* `alias` – A list of fully qualified domain names (if any) for each alias created for the instance.
 
-* `fqdn_efs` – The fully qualified domain name of the EFS volume, if any.
-
-* `public_dns` - The public DNS name assigned to the instance, if any.
-
-* `public_ip` - The public IP address assigned to the instance, if any.
+* `availability_zone` – The AWS availability zone to which the instance is assigned.
 
 * `private_dns` - The private DNS name assigned to the instance.
 
 * `private_ip` - The private IP address assigned to the instance
+
+* `public_dns` - The public DNS name assigned to the instance, if any.
+
+* `public_ip` - The public IP address assigned to the instance, if any.
