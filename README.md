@@ -13,9 +13,9 @@ Example usage (simple case)
 module "instance" {
   source = "git@github.com:techservicesillinois/terraform-aws-ec2"
 
-  name = "example"
-  tier = "public"
-  vpc  = "vpc_name"
+  name        = "example"
+  subnet_type = "public"
+  vpc         = "vpc_name"
 }
 ```
 
@@ -38,9 +38,9 @@ module "instance" {
     create   = false
   }
 
-  name       = "example"
-  tier       = "public"
-  vpc        = "vpc_name"
+  name        = "example"
+  subnet_type = "public"
+  vpc         = "vpc_name"
 }
 ```
 
@@ -61,9 +61,9 @@ Example usage (with EBS volume)
 module "instance" {
   source = "git@github.com:techservicesillinois/terraform-aws-ec2"
 
-  name = "example"
-  tier = "public"
-  vpc  = "vpc_name"
+  name        = "example"
+  subnet_type = "public"
+  vpc         = "vpc_name"
 
     # Mount block storage device at /scratch.
     ebs_volume = {
@@ -81,9 +81,9 @@ Example usage (with EFS file system)
 module "instance" {
   source = "git@github.com:techservicesillinois/terraform-aws-ec2"
 
-  name = "example"
-  tier = "public"
-  vpc  = "vpc_name"
+  name        = "example"
+  subnet_type = "public"
+  vpc         = "vpc_name"
  
   # Mount EFS file system at /mnt.
   efs_file_system = {
@@ -136,12 +136,9 @@ to the EC2 instance.
 
 * `security_groups` - (Optional) List of security group names.
 
-* `tags` - (Optional) A mapping of tags to assign to the resource.
+* `tags` - (Optional) A mapping of tags to assign where supported.
 
 * `template_file` - (Optional) User data template file.
-
-* `tier` - (Optional) A subnet tier tag (e.g., public, private,
-nat) to determine subnets to be associated with the load balancer.
 
 * `private_ip` - (Optional) Private IP address to associate with the instance in a VPC.
 
