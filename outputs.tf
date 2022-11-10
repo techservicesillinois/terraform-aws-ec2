@@ -1,5 +1,5 @@
 output "alias" {
-  value = aws_route53_record.default.*.fqdn
+  value = { for x in aws_route53_record.default : x.fqdn => x.records }
 }
 
 output "availability_zone" {
@@ -15,9 +15,9 @@ output "private_ip" {
 }
 
 output "public_dns" {
-  value = local.public_dns
+  value = (local.public_dns != "") ? local.public_dns : null
 }
 
 output "public_ip" {
-  value = local.public_ip
+  value = (local.public_ip != "") ? local.public_ip : null
 }
