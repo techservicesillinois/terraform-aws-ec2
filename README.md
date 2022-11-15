@@ -136,6 +136,8 @@ to the EC2 instance.
 
 * `security_groups` - (Optional) List of security group names.
 
+* `subnet_type` - (Required) Subnet type (e.g., 'campus', 'private', 'public') for resource placement.
+
 * `tags` - (Optional) A mapping of tags to assign where supported.
 
 * `template_file` - (Optional) User data template file.
