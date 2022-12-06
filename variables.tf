@@ -70,6 +70,11 @@ variable "eip" {
   default     = {}
 }
 
+variable "iam_instance_profile" {
+  description = "IAM Instance Profile to launch the instance with"
+  default     = null
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
   default     = "t2.nano"
