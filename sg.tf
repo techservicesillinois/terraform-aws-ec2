@@ -2,7 +2,7 @@ resource "aws_security_group" "default" {
   description = "EC2 instance ${var.name} security group"
   name        = var.name
   vpc_id      = local.vpc_id
-  tags        = merge({ "Name" = var.name }, var.tags)
+  tags        = merge({ Name = var.name }, var.tags)
 }
 
 resource "aws_security_group_rule" "in_tcp" {

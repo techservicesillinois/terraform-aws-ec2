@@ -4,7 +4,10 @@
 
 Provides an Elastic Computing Cloud (EC2) virtual server instance,
 and optional Route 53 aliases.
-This module only supports single-instance servers on public subnets.
+This module only supports single-instance servers.
+
+For more information, see the documentation on the Terraform
+[aws_instance](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance) resource.
 
 Example usage (simple case)
 -----------------
@@ -17,9 +20,28 @@ module "instance" {
   subnet_type = "public"
   vpc         = "vpc_name"
 }
+
+```
+Example usage (with resized root volume and storage type)
+-----------------
+
+```hcl
+module "instance" {
+  source = "git@github.com:techservicesillinois/terraform-aws-ec2"
+
+  name        = "example"
+  subnet_type = "public"
+  vpc         = "vpc_name"
+  
+  # Resize root volume to 16 gb and use gp3 storage.
+  root_block_device = {
+    volume_size = 16
+    volume_type = "gp3"
+  }
+}
 ```
 
-Example usage (alias block with optional creation of Elastic IP)
+Example usage (alias block with Elastic IP assignment)
 -----------------
 
 ```hcl
@@ -34,7 +56,7 @@ module "instance" {
   ]
 
   eip = {
-    name     = "my_existing_eip"
+    name     = "existing_eip_name"
     create   = false
   }
 
@@ -44,13 +66,10 @@ module "instance" {
 }
 ```
 
-Note that if you stop and start the EC2 instance, the IP address will
-change, but the alias record will not change. This behavior causes
-the Route53 record to be out of date.
+**NOTE:** If you stop and start the EC2 instance from the console, command line interface, or API, the instance's IP address will change, but the alias record will not change. **This behavior causes the Route53 record to point to an IP address no longer associated with the EC2 instance.**
 
 Avoid this by specifying an `eip` block, which attaches an Elastic IP address
-that persists until destroyed. This Elastic IP address can be created on the
-fly at the time the EC2 instance is created. Alternatively, to have an 
+that persists until destroyed. This Elastic IP address can be created at the time the EC2 instance is created. Alternatively, to have an 
 Elastic IP address which persists unchanged even after the EC2 instance is 
 torn down and rebuilt, create it in advance and look it up by name.
 
@@ -65,8 +84,8 @@ module "instance" {
   subnet_type = "public"
   vpc         = "vpc_name"
 
-    # Mount block storage device at /scratch.
-    ebs_volume = {
+  # Mount block storage device at /scratch.
+  ebs_volume = {
     device_name = "/dev/xvdf"
     mount_point = "/scratch"
     volume_id   = "vol-cab005eb1ab"
@@ -133,6 +152,8 @@ to the EC2 instance.
 * `key_name` - (Optional) SSH key (if any) to assign to EC2 instance.
 
 * `ports` - (Optional) Ports to be opened on the EC2 instance.
+
+* `root_block_device` – (Optional) A [root_block_device](#root_block_device) block used to define characteristics of the root volume.
 
 * `security_groups` - (Optional) List of security group names.
 
@@ -202,6 +223,23 @@ the `name` argument above).
 
 * `create` - (Required) Set to true if the Elastic IP is to be created for the
 EC2 instance. Set to false if the Elastic IP already exists and is to be looked up.
+
+`root_block_device`
+-------------------
+
+* `delete_on_termination`- (Optional) Whether the volume should be destroyed on instance termination. Defaults to true.
+
+* `encrypted` - (Optional) Whether to enable volume encryption. Defaults to false.
+
+* `iops` - (Optional) Amount of provisioned IOPS. Only valid for volume_type of io1, io2 or gp3.
+
+* `kms_key_id` - (Optional) Amazon Resource Name (ARN) of the KMS Key to use when encrypting the volume.
+
+* `throughput` - (Optional) Throughput to provision for a volume in mebibytes per second (MiB/s). This is only valid for volume_type of gp3.
+
+* `volume_size` - (Optional) Size of the volume in gibibytes (GiB).
+
+* `volume_type` - (Optional) Type of volume. Valid values include standard, gp2, gp3, io1, io2, sc1, or st1. Defaults to gp2.
 
 Template variables
 -------
