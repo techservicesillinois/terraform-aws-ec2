@@ -86,6 +86,21 @@ variable "ports" {
   default     = []
 }
 
+variable "root_block_device" {
+  description = "Definition for instance's root block device"
+  type = object({
+    delete_on_termination = optional(bool)
+    encrypted             = optional(bool)
+    iops                  = optional(number)
+    kms_key_id            = optional(string)
+    throughput            = optional(number)
+    volume_size           = optional(number)
+    volume_type           = optional(string)
+  })
+  default = {
+  }
+}
+
 variable "subnet_type" {
   description = "Subnet type (e.g., 'campus', 'private', 'public') for resource placement"
 }

@@ -4,9 +4,10 @@ locals {
 }
 
 resource "aws_volume_attachment" "default" {
-  count        = length(var.ebs_volume) > 0 ? 1 : 0
-  skip_destroy = true
+  count = length(var.ebs_volume) > 0 ? 1 : 0
+
   device_name  = var.ebs_volume["device_name"]
-  volume_id    = var.ebs_volume["volume_id"]
   instance_id  = aws_instance.default.id
+  skip_destroy = true
+  volume_id    = var.ebs_volume["volume_id"]
 }
