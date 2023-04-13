@@ -6,7 +6,7 @@ resource "aws_instance" "default" {
   key_name                    = var.key_name
   private_ip                  = var.private_ip
   subnet_id                   = local.subnet_id
-  tags                        = merge({ Name = var.name }, var.tags)
+  tags                        = local.tags
   user_data                   = data.template_file.selected.rendered
 
   vpc_security_group_ids = concat(
@@ -21,10 +21,20 @@ resource "aws_instance" "default" {
       encrypted             = root_block_device.value.encrypted
       iops                  = root_block_device.value.iops
       kms_key_id            = root_block_device.value.kms_key_id
-      tags                  = merge(var.tags, { Name = format("%s:%s", var.name, "root") })
+      tags                  = merge(local.tags, { Name = format("%s:%s", var.name, "root") })
       throughput            = root_block_device.value.throughput
       volume_size           = root_block_device.value.volume_size
       volume_type           = root_block_device.value.volume_type
     }
   }
+}
+
+# Add tags to elastic network interface.
+
+resource "aws_ec2_tag" "default" {
+  resource_id = aws_instance.default.primary_network_interface_id
+
+  for_each = local.tags
+  key      = each.key
+  value    = each.value
 }
