@@ -16,9 +16,8 @@ locals {
   fqdn_efs          = element(concat(data.aws_efs_file_system.selected.*.dns_name, [""]), 0)
   subnet_id         = module.get-subnets.subnets_by_az[local.availability_zone][0]
   vpc_id            = module.get-subnets.vpc.id
-
-  # Allow SSH port (22) by default.
-  ports = sort(distinct(concat([22], var.ports)))
+  ports             = sort(distinct(concat([22], var.ports))) # Allow SSH (port 22).
+  tags              = merge({ Name = var.name }, var.tags)
 }
 
 module "get-subnets" {

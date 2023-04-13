@@ -33,7 +33,7 @@ data "aws_eip" "selected" {
 resource "aws_eip" "default" {
   count = local.want_eip && local.eip_create ? 1 : 0
 
-  tags = merge(var.tags, { Name = local.eip_name })
+  tags = merge(local.tags, { Name = local.eip_name })
 }
 
 # Attach the EIP (whether created or looked up) to the EC2 instance
