@@ -7,7 +7,7 @@ resource "aws_instance" "default" {
   private_ip                  = var.private_ip
   subnet_id                   = local.subnet_id
   tags                        = local.tags
-  user_data                   = data.template_file.selected.rendered
+  user_data                   = templatefile(var.template_file, local.template_vars)
 
   vpc_security_group_ids = concat(
     [aws_security_group.default.id],
