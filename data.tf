@@ -4,10 +4,6 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.1"
     }
-
-    template = {
-      source = "hashicorp/template"
-    }
   }
 }
 
@@ -75,12 +71,10 @@ locals {
   hostname           = length(var.alias) > 0 ? format("%s.%s", lookup(var.alias[0], "hostname", var.name), var.alias[0].domain) : null
 }
 
-data "template_file" "selected" {
-  template = file(var.template_file)
-
-  # Pass hostname (fully-qualified domain name), and EBS and EFS variables
-  # to template.
-  vars = {
+locals {
+  # Generate map containing hostname (fully-qualified domain name),
+  # and EBS and EFS variables for call to templatefile().
+  template_vars = {
     ebs_device_name      = local.ebs_device_name
     ebs_mount_point      = local.ebs_mount_point
     efs_file_system_name = local.fqdn_efs
