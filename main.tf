@@ -27,6 +27,12 @@ resource "aws_instance" "default" {
       volume_type           = root_block_device.value.volume_type
     }
   }
+
+  # Suppress destruction and re-creation of resource when new AMIs
+  # are released.
+  lifecycle {
+    ignore_changes = [ami]
+  }
 }
 
 # Add tags to elastic network interface.
