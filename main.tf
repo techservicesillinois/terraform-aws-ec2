@@ -1,7 +1,20 @@
+resource "aws_iam_instance_profile" "default" {
+  for_each = toset(var.iam_instance_profile != null ? [var.iam_instance_profile] : [])
+
+  name = each.key
+  role = each.key
+  tags = local.tags
+}
+
+locals {
+  iam_instance_profile_name = try(aws_iam_instance_profile.default[var.iam_instance_profile].name, null)
+}
+
 resource "aws_instance" "default" {
   ami                         = data.aws_ami.selected.id
   associate_public_ip_address = var.associate_public_ip_address
   availability_zone           = local.availability_zone
+  iam_instance_profile        = local.iam_instance_profile_name
   instance_type               = var.instance_type
   key_name                    = var.key_name
   private_ip                  = var.private_ip

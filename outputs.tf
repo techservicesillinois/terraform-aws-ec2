@@ -6,6 +6,10 @@ output "availability_zone" {
   value = local.availability_zone
 }
 
+output "iam_instance_profile" {
+  value = aws_instance.default.iam_instance_profile
+}
+
 output "private_dns" {
   value = aws_instance.default.private_dns
 }
