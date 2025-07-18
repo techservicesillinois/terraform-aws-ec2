@@ -70,6 +70,11 @@ variable "eip" {
   default     = {}
 }
 
+variable "iam_instance_profile" {
+  description = "IAM instance profile for this EC2 instance"
+  default     = null
+}
+
 variable "instance_type" {
   description = "EC2 instance type"
 }
