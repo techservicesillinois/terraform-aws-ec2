@@ -147,7 +147,7 @@ to the EC2 instance.
 
 * `eip` – (Optional) An [eip](#eip) block used to create or look up an Elastic IP to attach to the EC2 instance. To omit the Elastic IP entirely, do not specify an `eip` block.
 
-* `instance_type` - (Optional) EC2 instance type. Default: t2.nano.
+* `instance_type` - (Required) EC2 instance type.
 
 * `key_name` - (Optional) SSH key (if any) to assign to EC2 instance.
 
